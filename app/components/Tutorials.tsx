@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Slack, Mail, Youtube, Terminal, FileText, Twitter, Command } from 'lucide-react';
 import Image from 'next/image';
-import { Tutorial } from '@/types';
+import { Tutorial } from '../../types';
 
 const tutorials: Tutorial[] = [
   {

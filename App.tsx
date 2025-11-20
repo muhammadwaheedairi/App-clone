@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Hero } from './components/Hero';
-import { Features } from './components/Features';
-import { Testimonials } from './components/Testimonials';
-import { Pricing } from './components/Pricing';
-import { FAQ } from './components/FAQ';
-import { Footer } from './components/Footer';
-import { Demo } from './components/Demo';
-import { Tutorials } from './components/Tutorials';
+import { Hero } from './app/components/Hero';
+import { Features } from './app/components/Features';
+import { Testimonials } from './app/components/Testimonials';
+import { Pricing } from './app/components/Pricing';
+import { FAQ } from './app/components/FAQ';
+import { Footer } from './app/components/Footer';
+import { Demo } from './app/components/Demo';
+import { Tutorials } from './app/components/Tutorials';
 
 const App: React.FC = () => {
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FAQItem } from '@/types';
+import { FAQItem } from '../../types';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 
 const items: FAQItem[] = [
