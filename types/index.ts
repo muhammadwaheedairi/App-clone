@@ -6,7 +6,7 @@ export interface TestimonialData {
   handle: string;
   avatar: string;
   content: string;
-  source?: string; // e.g., 'Reflect Notes'
+  source?: string;
 }
 
 export interface FeatureItem {
