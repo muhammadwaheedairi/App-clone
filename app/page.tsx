@@ -1,3 +1,4 @@
+import React from 'react';
 import { Hero } from './components/Hero';
 import { Features } from './components/Features';
 import { Demo } from './components/Demo';
@@ -8,7 +9,7 @@ import { FAQ } from './components/FAQ';
 
 export default function Home() {
   return (
-    <>
+    <div className="flex flex-col w-full">
       <Hero />
       <Features />
       <div id="demo">
@@ -24,6 +25,6 @@ export default function Home() {
       <div id="faq">
         <FAQ />
       </div>
-    </>
+    </div>
   );
 }
