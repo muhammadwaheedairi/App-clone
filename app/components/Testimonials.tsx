@@ -1,7 +1,5 @@
 import React from 'react';
 import { Play } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
 
 export const Testimonials: React.FC = () => {
   return (
@@ -29,11 +27,10 @@ export const Testimonials: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-8 gap-4">
               <div className="flex items-center gap-3">
                 <div className="relative w-12 h-12 rounded-full bg-zinc-800 border border-white/5 overflow-hidden">
-                    <Image 
+                    <img 
                       src="https://unavatar.io/twitter/maccaw" 
                       alt="Alex MacCaw"
-                      fill
-                      className="object-cover"
+                      className="absolute inset-0 w-full h-full object-cover"
                     />
                 </div>
                 <div>
@@ -43,14 +40,14 @@ export const Testimonials: React.FC = () => {
               </div>
               
               {/* Reflect Notes Badge */}
-              <Link href="#" className="flex items-center gap-2 bg-[#1A1A1C] hover:bg-[#252528] px-3 py-1.5 rounded-lg border border-white/5 transition-colors group w-fit">
+              <a href="#" className="flex items-center gap-2 bg-[#1A1A1C] hover:bg-[#252528] px-3 py-1.5 rounded-lg border border-white/5 transition-colors group w-fit">
                 <div className="w-5 h-5 bg-indigo-600 rounded flex items-center justify-center">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                   </svg>
                 </div>
                 <span className="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors">Reflect Notes</span>
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -69,11 +66,10 @@ export const Testimonials: React.FC = () => {
                  </div>
                  <div className="flex items-center gap-3 mt-8">
                     <div className="relative w-10 h-10 rounded-full bg-zinc-800 border border-white/5 overflow-hidden">
-                      <Image 
+                      <img 
                         src="https://unavatar.io/twitter/curious_vii" 
                         alt="Christian"
-                        fill
-                        className="object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     </div>
                     <div>
@@ -91,11 +87,10 @@ export const Testimonials: React.FC = () => {
                  </div>
                  <div className="flex items-center gap-3 mt-8">
                     <div className="relative w-10 h-10 rounded-full bg-zinc-800 border border-white/5 overflow-hidden">
-                      <Image 
+                      <img 
                         src="https://unavatar.io/twitter/altryne" 
                         alt="Alex Volkov"
-                        fill
-                        className="object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     </div>
                     <div>
@@ -117,11 +112,10 @@ export const Testimonials: React.FC = () => {
                  </div>
                  <div className="flex items-center gap-3 mt-8">
                     <div className="relative w-10 h-10 rounded-full bg-zinc-800 border border-white/5 overflow-hidden">
-                      <Image 
+                      <img 
                         src="https://unavatar.io/twitter/FrancescoD_Ales" 
                         alt="Francesco"
-                        fill
-                        className="object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     </div>
                     <div>
@@ -138,11 +132,10 @@ export const Testimonials: React.FC = () => {
                  </div>
                  <div className="flex items-center gap-3 mt-8">
                     <div className="relative w-10 h-10 rounded-full bg-zinc-800 border border-white/5 overflow-hidden">
-                      <Image 
+                      <img 
                         src="https://unavatar.io/twitter/palmerater" 
                         alt="Dr. Palmer Piana" 
-                        fill
-                        className="object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     </div>
                     <div>
@@ -183,11 +176,10 @@ export const Testimonials: React.FC = () => {
 
                  <div className="p-5 flex items-center gap-3">
                     <div className="relative w-10 h-10 rounded-full bg-zinc-800 border border-white/5 overflow-hidden">
-                      <Image 
+                      <img 
                         src="https://unavatar.io/twitter/fernandoanselmi" 
                         alt="Fernando Anselmi"
-                        fill
-                        className="object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     </div>
                     <div>

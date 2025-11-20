@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Apple, ArrowRight, ChevronsDown } from 'lucide-react';
-import Link from 'next/link';
 
 export const Hero: React.FC = () => {
   const [stage, setStage] = useState<'listening' | 'transcribing' | 'final'>('listening');
@@ -169,12 +168,12 @@ export const Hero: React.FC = () => {
         </span>
 
         {/* iOS Button */}
-        <Link href="#" className="mt-10 inline-flex items-center gap-2 pl-5 pr-4 py-2.5 rounded-full bg-[#121212] border border-white/[0.08] text-[13px] text-zinc-400 hover:text-white hover:border-white/20 hover:bg-[#1a1a1a] transition-all group backdrop-blur-md">
+        <a href="#" className="mt-10 inline-flex items-center gap-2 pl-5 pr-4 py-2.5 rounded-full bg-[#121212] border border-white/[0.08] text-[13px] text-zinc-400 hover:text-white hover:border-white/20 hover:bg-[#1a1a1a] transition-all group backdrop-blur-md">
           <span className="font-medium">Now available on iOS</span>
           <span className="text-zinc-500 group-hover:text-white transition-colors flex items-center gap-1 ml-1.5">
              Download now <ArrowRight size={14} className="opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-transform" />
           </span>
-        </Link>
+        </a>
       </div>
       
       {/* Scroll Indicator */}

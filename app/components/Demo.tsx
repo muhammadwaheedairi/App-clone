@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Volume2, VolumeX, Maximize2, MoreVertical, Mic, Sparkles, Wand2, Copy, RotateCw } from 'lucide-react';
-import Image from 'next/image';
+import { GoogleGenAI, LiveServerMessage, Modality } from "@google/genai";
 
 export const Demo: React.FC = () => {
   // Mode State
@@ -21,6 +21,13 @@ export const Demo: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
+  // Audio Streaming Refs
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const sessionRef = useRef<any>(null);
+
   // Video Logic
   useEffect(() => {
     let interval: number;
@@ -37,6 +44,13 @@ export const Demo: React.FC = () => {
     }
     return () => clearInterval(interval);
   }, [isPlaying, duration, mode]);
+
+  // Cleanup audio resources on unmount or mode switch
+  useEffect(() => {
+    return () => {
+      stopAudioStream();
+    };
+  }, []);
 
   const togglePlay = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -66,49 +80,165 @@ export const Demo: React.FC = () => {
 
   const progressPercent = (currentTime / duration) * 100;
 
-  // Interactive Logic
-  const handleVoiceInput = () => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInputText((prev) => (prev ? prev + ' ' + transcript : transcript));
-      };
-      recognition.onerror = (event: any) => {
-        console.error("Speech recognition error", event.error);
+  // --- Audio Helper Functions ---
+  const createBlob = (data: Float32Array): { data: string; mimeType: string } => {
+    const l = data.length;
+    const int16 = new Int16Array(l);
+    for (let i = 0; i < l; i++) {
+      // Clamp values to [-1, 1] before scaling
+      const s = Math.max(-1, Math.min(1, data[i]));
+      int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    }
+    
+    // Manual binary to base64 string conversion for performance
+    let binary = '';
+    const bytes = new Uint8Array(int16.buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    
+    return {
+      data: btoa(binary),
+      mimeType: 'audio/pcm;rate=16000',
+    };
+  };
+
+  const stopAudioStream = () => {
+    if (processorRef.current) {
+      processorRef.current.disconnect();
+      processorRef.current = null;
+    }
+    if (sourceRef.current) {
+      sourceRef.current.disconnect();
+      sourceRef.current = null;
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    if (sessionRef.current) {
+        sessionRef.current = null;
+    }
+    setIsListening(false);
+  };
+
+  const handleVoiceInput = async () => {
+    if (isListening) {
+      stopAudioStream();
+      return;
+    }
+
+    try {
+        setIsListening(true);
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+        // Initialize Audio Context
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        const audioContext = new AudioContextClass({ sampleRate: 16000 });
+        audioContextRef.current = audioContext;
+
+        // Connect to Gemini Live
+        // We use the sessionPromise pattern to ensure we don't have a race condition
+        // where the callbacks try to use 'session' before it's assigned.
+        const sessionPromise = ai.live.connect({
+            model: 'gemini-2.5-flash-native-audio-preview-09-2025',
+            config: {
+                responseModalities: [Modality.AUDIO],
+                // Enable transcription for user input audio.
+                // IMPORTANT: This must be an empty object to use default/session model settings.
+                inputAudioTranscription: {}, 
+                systemInstruction: "You are a helpful transcription assistant. Your only job is to listen. Do not speak back.",
+            },
+            callbacks: {
+                onopen: async () => {
+                    console.log("Gemini Live Connected");
+                    // Get Microphone Stream
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            sampleRate: 16000,
+                            channelCount: 1,
+                        } 
+                    });
+                    streamRef.current = stream;
+                    
+                    const source = audioContext.createMediaStreamSource(stream);
+                    sourceRef.current = source;
+
+                    // Process Audio
+                    const processor = audioContext.createScriptProcessor(4096, 1, 1);
+                    processorRef.current = processor;
+
+                    processor.onaudioprocess = (e) => {
+                        const inputData = e.inputBuffer.getChannelData(0);
+                        const pcmBlob = createBlob(inputData);
+                        
+                        // Send audio chunk using the promise to guarantee session availability
+                        sessionPromise.then(session => {
+                            session.sendRealtimeInput({ media: pcmBlob });
+                        });
+                    };
+
+                    source.connect(processor);
+                    processor.connect(audioContext.destination);
+                },
+                onmessage: (message: LiveServerMessage) => {
+                    // Handle Transcription
+                    if (message.serverContent?.inputTranscription) {
+                        const text = message.serverContent.inputTranscription.text;
+                        if (text) {
+                            setInputText((prev) => prev + text);
+                        }
+                    }
+                    // We ignore model audio output (Modality.AUDIO) for this specific demo
+                    // as we want a "Dictation" experience, not a conversation.
+                },
+                onclose: () => {
+                    console.log("Gemini Live Disconnected");
+                    setIsListening(false);
+                },
+                onerror: (err) => {
+                    console.error("Gemini Live Error:", err);
+                    setIsListening(false);
+                }
+            }
+        });
+        
+        sessionRef.current = await sessionPromise;
+
+    } catch (error) {
+        console.error("Failed to start voice input:", error);
         setIsListening(false);
-      };
-      
-      recognition.start();
-    } else {
-      alert('Speech recognition is not supported in this browser. Please try Chrome or Safari.');
+        alert("Could not access microphone or connect to AI service.");
     }
   };
 
+  // Interactive Logic - Rewrite
   const handleRewrite = async () => {
     if (!inputText.trim()) return;
     setIsProcessing(true);
     setOutputText(''); // Clear previous output
 
     try {
-      const response = await fetch('/api/rewrite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: inputText }),
-      });
-      
-      const data = await response.json();
-      if (data.text) {
-        setOutputText(data.text);
-      } else {
-        setOutputText("Error: " + (data.error || "Could not generate response."));
-      }
+        // Direct Client-Side Call
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: `You are Superwhisper, an advanced AI voice-to-text assistant. 
+          The user has provided a rough transcript or draft. 
+          Rewrite the following text to be professional, concise, and clear. 
+          Do not add any conversational filler. Just output the rewritten text.
+          
+          Input text: "${inputText}"`,
+        });
+        
+        const rewrittenText = response.text || "Could not generate a response.";
+        setOutputText(rewrittenText);
+
     } catch (error) {
       console.error("Error calling rewrite API:", error);
       setOutputText("Error connecting to the AI service.");
@@ -133,7 +263,7 @@ export const Demo: React.FC = () => {
         
         <div className="p-1 bg-zinc-900/50 rounded-full border border-white/10 flex items-center gap-1 relative backdrop-blur-sm">
            <button 
-             onClick={() => { setMode('video'); setIsPlaying(false); }}
+             onClick={() => { setMode('video'); setIsPlaying(false); stopAudioStream(); }}
              className={`relative z-10 px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${mode === 'video' ? 'text-black' : 'text-zinc-400 hover:text-white'}`}
            >
              Video Tour
@@ -168,12 +298,10 @@ export const Demo: React.FC = () => {
 
                 {/* Presenter Bubble */}
                 <div className="absolute bottom-20 right-6 md:bottom-24 md:right-10 w-28 h-36 md:w-40 md:h-48 rounded-2xl overflow-hidden border border-white/10 shadow-2xl z-20 bg-zinc-900">
-                    <Image 
+                    <img 
                         src="https://picsum.photos/300/400?random=25" 
                         alt="Presenter"
-                        fill
-                        className="object-cover opacity-90"
-                        unoptimized
+                        className="absolute inset-0 w-full h-full object-cover opacity-90"
                     />
                     <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]"></div>
                 </div>
@@ -267,9 +395,13 @@ export const Demo: React.FC = () => {
                   <button 
                     onClick={handleVoiceInput}
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${isListening ? 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)] scale-110' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'}`}
-                    title="Dictate"
+                    title={isListening ? "Stop Recording" : "Start Dictation"}
                   >
-                    <Mic size={20} className={isListening ? 'animate-pulse text-white' : ''} />
+                    {isListening ? (
+                        <span className="w-4 h-4 bg-white rounded-sm animate-pulse"></span>
+                    ) : (
+                        <Mic size={20} />
+                    )}
                   </button>
                   
                   <button 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Twitter, Youtube, MessageCircle, Github, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
 
 export const Footer: React.FC = () => {
   return (
@@ -25,9 +24,9 @@ export const Footer: React.FC = () => {
             <div className="p-6 rounded-2xl bg-[#0F0F10] border border-zinc-900">
                 <h4 className="text-zinc-400 font-semibold mb-4">Policies</h4>
                 <ul className="space-y-3 text-sm text-zinc-500">
-                    <li><Link href="#" className="hover:text-white transition-colors">Terms of service</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Refund policy</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Privacy policy</Link></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Terms of service</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Refund policy</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Privacy policy</a></li>
                 </ul>
             </div>
 
@@ -35,10 +34,10 @@ export const Footer: React.FC = () => {
             <div className="p-6 rounded-2xl bg-[#0F0F10] border border-zinc-900">
                 <h4 className="text-zinc-400 font-semibold mb-4">Resources & Support</h4>
                  <ul className="space-y-3 text-sm text-zinc-500">
-                    <li><Link href="#" className="hover:text-white transition-colors">Changelog</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Roadmap</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Documentation & Support</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Manage Billing</Link></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Changelog</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Roadmap</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Documentation & Support</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Manage Billing</a></li>
                 </ul>
             </div>
 
@@ -47,10 +46,10 @@ export const Footer: React.FC = () => {
                 <h4 className="text-zinc-400 font-semibold mb-4">Let's stay in touch!</h4>
                 <p className="text-sm text-zinc-600 mb-4">Never miss news and updates about Superwhisper</p>
                 <div className="flex gap-3">
-                    <Link href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><Twitter size={18}/></Link>
-                    <Link href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><Github size={18}/></Link>
-                    <Link href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><Youtube size={18}/></Link>
-                    <Link href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><MessageCircle size={18}/></Link>
+                    <a href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><Twitter size={18}/></a>
+                    <a href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><Github size={18}/></a>
+                    <a href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><Youtube size={18}/></a>
+                    <a href="#" className="p-2 bg-zinc-900 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors"><MessageCircle size={18}/></a>
                 </div>
             </div>
 

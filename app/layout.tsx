@@ -1,11 +1,17 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import React from 'react';
 import './globals.css';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+// Ensure /public/fonts/Inter-Variable.woff2 exists
+// If you see a "Font file not found" error, ensure you have placed the file in public/fonts/
+const inter = localFont({
+  src: '../public/fonts/Inter-Variable.woff2',
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Superwhisper - AI Voice to Text',
@@ -19,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.className} bg-[#050505] text-white antialiased`}>
+      <body className={`${inter.variable} bg-[#050505] text-white antialiased font-sans`}>
         <Navbar />
         <main className="min-h-screen overflow-x-hidden">
           {children}

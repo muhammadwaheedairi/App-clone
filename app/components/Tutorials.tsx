@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Slack, Mail, Youtube, Terminal, FileText, Twitter, Command } from 'lucide-react';
-import Image from 'next/image';
 import { Tutorial } from '../../types';
 
 const tutorials: Tutorial[] = [
@@ -168,12 +167,10 @@ export const Tutorials: React.FC = () => {
                                 ${isActive ? 'shadow-[0_0_40px_rgba(255,255,255,0.05)]' : ''}
                             `}>
                                 {/* Background Image */}
-                                <Image 
+                                <img 
                                     src={tutorial.image} 
                                     alt={tutorial.app} 
-                                    fill
-                                    className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
-                                    unoptimized
+                                    className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
                                 />
                                 
                                 {/* Overlay Gradient */}
@@ -201,12 +198,10 @@ export const Tutorials: React.FC = () => {
 
                                 {/* User Bubble (Bottom Left) */}
                                 <div className="absolute bottom-4 left-4 w-10 h-10 rounded-full border border-white/20 overflow-hidden bg-zinc-800 shadow-lg z-20">
-                                    <Image 
+                                    <img 
                                         src={`https://picsum.photos/100/100?random=${tutorial.id + 50}`} 
-                                        fill
-                                        className="object-cover" 
+                                        className="absolute inset-0 w-full h-full object-cover"
                                         alt="Presenter" 
-                                        unoptimized
                                     />
                                 </div>
 
