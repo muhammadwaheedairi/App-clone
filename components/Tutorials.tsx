@@ -1,175 +1,228 @@
-import React, { useState } from 'react';
-import { Linkedin, Terminal, Mail, Play } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Play, Slack, Mail, Youtube, Terminal, FileText, Twitter, Command } from 'lucide-react';
+
+interface Tutorial {
+  id: number;
+  app: string;
+  headlineStart: string;
+  headlineEnd: string;
+  description: string;
+  duration: string;
+  image: string;
+  logo: React.ReactNode;
+  color: string;
+}
+
+const tutorials: Tutorial[] = [
+  {
+    id: 0,
+    app: 'Gmail',
+    headlineStart: 'Respond to an email',
+    headlineEnd: 'in seconds',
+    description: 'Fly through your emails',
+    duration: '2 min',
+    image: 'https://images.unsplash.com/photo-1557200130-4a30a32b518b?auto=format&fit=crop&w=800&q=80',
+    logo: <Mail className="w-12 h-12 text-red-500 drop-shadow-lg" />,
+    color: '#EA4335'
+  },
+  {
+    id: 1,
+    app: 'Slack',
+    headlineStart: 'Whip through',
+    headlineEnd: 'Slack messages',
+    description: 'Send perfect messages at work',
+    duration: '7 min',
+    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80',
+    logo: <Slack className="w-12 h-12 text-white drop-shadow-lg" />,
+    color: '#E01E5A'
+  },
+  {
+    id: 2,
+    app: 'YouTube',
+    headlineStart: 'Summarize videos',
+    headlineEnd: 'instantly',
+    description: 'Quickly solidify your learning',
+    duration: '5 min',
+    image: 'https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=800&q=80',
+    logo: <Youtube className="w-12 h-12 text-red-600 drop-shadow-lg" />,
+    color: '#FF0000'
+  },
+  {
+    id: 3,
+    app: 'VS Code',
+    headlineStart: 'Comment code',
+    headlineEnd: 'with your voice',
+    description: 'Documentation made easy',
+    duration: '4 min',
+    image: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=80',
+    logo: <Terminal className="w-12 h-12 text-blue-500 drop-shadow-lg" />,
+    color: '#007ACC'
+  },
+  {
+    id: 4,
+    app: 'Notion',
+    headlineStart: 'Write pages',
+    headlineEnd: 'at speed of thought',
+    description: 'Organize your life effortlessly',
+    duration: '6 min',
+    image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=800&q=80',
+    logo: <FileText className="w-12 h-12 text-zinc-100 drop-shadow-lg" />,
+    color: '#FFFFFF'
+  },
+  {
+    id: 5,
+    app: 'Twitter',
+    headlineStart: 'Draft viral tweets',
+    headlineEnd: 'fast',
+    description: 'Grow your audience daily',
+    duration: '3 min',
+    image: 'https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=800&q=80',
+    logo: <Twitter className="w-12 h-12 text-sky-500 drop-shadow-lg" />,
+    color: '#1DA1F2'
+  },
+  {
+    id: 6,
+    app: 'Raycast',
+    headlineStart: 'Control your Mac',
+    headlineEnd: 'hands-free',
+    description: 'The ultimate productivity combo',
+    duration: '8 min',
+    image: 'https://images.unsplash.com/photo-1517430816045-df4b7de8db6e?auto=format&fit=crop&w=800&q=80',
+    logo: <Command className="w-12 h-12 text-orange-500 drop-shadow-lg" />,
+    color: '#FF6363'
+  }
+];
 
 export const Tutorials: React.FC = () => {
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [activeIndex, setActiveIndex] = useState(0); // Start with index 0 (Gmail) as per image, or any other
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const tutorials = [
-    {
-      id: 0,
-      tab: "Python Automation",
-      title: "Automate with Python",
-      description: "Generate complex scripts in seconds",
-      duration: "8 min",
-      imageComponent: (
-        <div className="relative w-full h-full bg-[#111] flex items-center justify-center overflow-hidden group">
-            <div className="absolute inset-0 opacity-20 bg-gradient-to-br from-yellow-900 to-blue-900"></div>
-            <Terminal size={64} className="text-yellow-500/50 absolute top-4 left-4" />
-            <div className="relative z-10 bg-[#1e1e1e] p-4 rounded-lg border border-white/10 shadow-2xl w-3/4 transform -rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                <div className="flex gap-1.5 mb-3">
-                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                    <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                </div>
-                <div className="space-y-2">
-                    <div className="h-2 w-1/3 bg-zinc-700 rounded"></div>
-                    <div className="h-2 w-2/3 bg-zinc-700 rounded"></div>
-                    <div className="h-2 w-1/2 bg-zinc-700 rounded"></div>
-                </div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" className="absolute -right-4 -bottom-4 w-16 h-16 opacity-20" alt="" />
-            </div>
-             {/* Webcam bubble */}
-             <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-zinc-800 shadow-lg z-20">
-                <img src="https://picsum.photos/100/100?random=10" className="w-full h-full object-cover opacity-80" alt="User" />
-            </div>
-        </div>
-      )
-    },
-    {
-      id: 1,
-      tab: "LinkedIn Outreach",
-      title: "Send Outreach\non Linkedin",
-      description: "Write better messages, get responses",
-      duration: "5 min",
-      imageComponent: (
-        <div className="relative w-full h-full bg-[#0B0B0D] flex items-center justify-center overflow-hidden group">
-             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
-             
-             {/* Browser Window Mockup */}
-             <div className="w-[85%] h-[80%] bg-[#1C1C1E] rounded-xl border border-white/10 shadow-2xl flex flex-col overflow-hidden relative transform group-hover:scale-[1.02] transition-transform duration-500">
-                 {/* Window Header */}
-                 <div className="h-8 bg-[#2C2C2E] border-b border-white/5 flex items-center px-3 gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]"></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#FEBC2E]"></div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#28C840]"></div>
-                 </div>
-                 
-                 {/* Content */}
-                 <div className="flex-1 bg-zinc-900 relative">
-                    {/* LinkedIn Header Mock */}
-                    <div className="h-12 bg-[#1C1C1E] border-b border-white/5 flex items-center px-4 justify-between">
-                        <Linkedin size={24} className="text-[#0077B5] fill-current" />
-                        <div className="w-6 h-6 rounded-full bg-zinc-700"></div>
-                    </div>
-                    {/* LinkedIn Feed Mock */}
-                    <div className="p-4 space-y-3 opacity-50">
-                        <div className="h-24 bg-[#252527] rounded border border-white/5"></div>
-                        <div className="h-24 bg-[#252527] rounded border border-white/5"></div>
-                    </div>
-
-                    {/* Superwhisper Floating Window */}
-                    <div className="absolute top-8 left-8 right-8 bottom-8 bg-[#111]/90 backdrop-blur-xl rounded-lg border border-white/10 p-4 shadow-2xl flex flex-col animate-in fade-in zoom-in duration-700">
-                        <div className="flex items-center gap-2 text-zinc-400 text-xs mb-2 font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                            Listening...
-                        </div>
-                        <div className="text-white text-sm leading-relaxed">
-                            "Hey Rahul, I wanted to show you a demo of Superwhisper..."
-                        </div>
-                    </div>
-                 </div>
-             </div>
-
-             {/* Webcam bubble */}
-             <div className="absolute bottom-6 right-6 w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden bg-zinc-800 shadow-xl z-20">
-                <img src="https://picsum.photos/100/100?random=8" className="w-full h-full object-cover" alt="Presenter" />
-            </div>
-        </div>
-      )
-    },
-    {
-      id: 2,
-      tab: "Email Management",
-      title: "Clear Your Inbox\nin Minutes",
-      description: "Draft replies 10x faster",
-      duration: "4 min",
-      imageComponent: (
-        <div className="relative w-full h-full bg-[#111] flex items-center justify-center overflow-hidden">
-            <Mail size={80} className="text-zinc-800 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-             <div className="relative z-10 w-3/4 space-y-2">
-                {[1,2,3].map((i) => (
-                    <div key={i} className="bg-[#1C1C1E] p-3 rounded border border-white/5 flex gap-3 items-center transform hover:translate-x-2 transition-transform">
-                        <div className="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0"></div>
-                        <div className="flex-1 space-y-1.5">
-                            <div className="h-1.5 w-1/4 bg-zinc-700 rounded"></div>
-                            <div className="h-1.5 w-3/4 bg-zinc-800 rounded"></div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-             {/* Webcam bubble */}
-             <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-zinc-800 shadow-lg z-20">
-                <img src="https://picsum.photos/100/100?random=12" className="w-full h-full object-cover opacity-80" alt="User" />
-            </div>
-        </div>
-      )
+  const scrollToSlide = (index: number) => {
+    setActiveIndex(index);
+    const container = scrollContainerRef.current;
+    if (container) {
+      const slides = container.children;
+      if (slides[index]) {
+        // Center the selected slide
+        slides[index].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        });
+      }
     }
-  ];
+  };
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        scrollToSlide(Math.max(0, activeIndex - 1));
+      } else if (e.key === 'ArrowRight') {
+        scrollToSlide(Math.min(tutorials.length - 1, activeIndex + 1));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeIndex]);
 
   return (
-    <section className="py-24 bg-black text-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
+    <section className="py-24 bg-black text-white overflow-hidden select-none">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
         
-        {/* Header Section */}
-        <div className="text-center mb-12 transition-all duration-500">
-          <span className="text-blue-500 font-medium text-sm mb-4 block">Tutorials</span>
-          <h2 className="text-4xl md:text-6xl font-bold mb-4 whitespace-pre-line leading-tight tracking-tight">
-            {tutorials[activeIndex].title}
+        {/* Header Section - Pixel Perfect Update */}
+        <div className="text-center mb-16 transition-all duration-500 relative z-10 max-w-5xl px-4">
+          <span className="text-[#3B82F6] font-semibold text-[15px] mb-6 block tracking-wide">Tutorials</span>
+          <h2 
+            key={activeIndex} 
+            className="text-[44px] md:text-[64px] font-bold mb-6 leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-2 duration-300"
+          >
+            <span className="text-[#666] transition-colors duration-500">{tutorials[activeIndex].headlineStart}</span>{' '}
+            <span className="text-white transition-colors duration-500">{tutorials[activeIndex].headlineEnd}</span>
           </h2>
-          <p className="text-zinc-400 text-lg">
+          <p className="text-[#888] text-lg md:text-[19px] font-medium tracking-wide">
             Quick videos to get you started in minutes
           </p>
         </div>
 
         {/* Carousel Section */}
-        <div className="w-full relative max-w-[1400px]">
-          
-            {/* Gradient Masks for edges */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-black to-transparent z-20 pointer-events-none hidden md:block" />
-            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-black to-transparent z-20 pointer-events-none hidden md:block" />
+        <div className="w-full relative">
+            {/* Gradient Masks */}
+            <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-black to-transparent z-20 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-black to-transparent z-20 pointer-events-none" />
 
-            <div className="flex justify-center items-center gap-8 overflow-x-auto md:overflow-visible pb-8 md:pb-0 snap-x snap-mandatory hide-scrollbar">
+            <div 
+                ref={scrollContainerRef}
+                className="flex gap-6 overflow-x-auto pb-12 px-[50vw] snap-x snap-mandatory hide-scrollbar items-start"
+                style={{ scrollBehavior: 'smooth' }}
+            >
                 {tutorials.map((tutorial, index) => {
                     const isActive = index === activeIndex;
                     return (
                         <div 
                             key={tutorial.id}
-                            onClick={() => setActiveIndex(index)}
+                            onClick={() => scrollToSlide(index)}
                             className={`
-                                relative flex-shrink-0 transition-all duration-500 ease-out cursor-pointer snap-center
-                                ${isActive ? 'w-[85vw] md:w-[600px] h-[300px] md:h-[400px] scale-100 z-10 opacity-100' : 'w-[60vw] md:w-[400px] h-[250px] md:h-[300px] scale-95 z-0 opacity-40 hover:opacity-60'}
+                                relative flex-shrink-0 transition-all duration-500 ease-out cursor-pointer snap-center group
+                                flex flex-col gap-4
+                                ${isActive ? 'opacity-100 scale-100' : 'opacity-30 hover:opacity-50 scale-95'}
                             `}
+                            style={{ width: 'min(85vw, 550px)' }}
                         >
-                            <div className={`w-full h-full rounded-2xl overflow-hidden border ${isActive ? 'border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]' : 'border-white/5'} bg-[#050505]`}>
-                                {tutorial.imageComponent}
+                            {/* Card Image */}
+                            <div className={`
+                                relative aspect-[16/10] w-full bg-[#111] rounded-2xl overflow-hidden border border-white/10
+                                transition-shadow duration-500
+                                ${isActive ? 'shadow-[0_0_40px_rgba(255,255,255,0.05)]' : ''}
+                            `}>
+                                {/* Background Image */}
+                                <img 
+                                    src={tutorial.image} 
+                                    alt={tutorial.app} 
+                                    className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+                                />
                                 
-                                {/* Overlay Content */}
-                                <div className={`absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 to-transparent flex items-end justify-between transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-                                    <div>
-                                        <p className="text-white font-medium text-lg mb-1">{tutorial.description}</p>
-                                        <div className="h-1 w-12 bg-white/20 rounded-full mt-2 overflow-hidden">
-                                            <div className="h-full bg-white w-1/3"></div>
+                                {/* Overlay Gradient */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                                {/* App Logo / Center Icon */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className={`
+                                        p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 
+                                        transform transition-all duration-500
+                                        ${isActive ? 'scale-110' : 'scale-100 grayscale'}
+                                    `}>
+                                        {tutorial.logo}
+                                    </div>
+                                </div>
+
+                                {/* Play Button (visible on hover of active) */}
+                                {isActive && (
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[1px]">
+                                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                                            <Play size={24} className="ml-1 text-black fill-black" />
                                         </div>
                                     </div>
-                                    <span className="text-zinc-400 text-sm font-medium font-mono">{tutorial.duration}</span>
-                                </div>
-                                
-                                {/* Inactive overlay duration only */}
-                                {!isActive && (
-                                    <div className="absolute bottom-4 right-4 text-zinc-500 text-xs font-mono">
-                                        {tutorial.duration}
-                                    </div>
                                 )}
+
+                                {/* User Bubble (Bottom Left) */}
+                                <div className="absolute bottom-4 left-4 w-10 h-10 rounded-full border border-white/20 overflow-hidden bg-zinc-800 shadow-lg z-20">
+                                    <img 
+                                        src={`https://picsum.photos/100/100?random=${tutorial.id + 50}`} 
+                                        className="w-full h-full object-cover" 
+                                        alt="Presenter" 
+                                    />
+                                </div>
+
+                                {/* Duration (Bottom Right) */}
+                                <div className="absolute bottom-4 right-4 px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-xs font-medium text-zinc-300 tabular-nums">
+                                    {tutorial.duration}
+                                </div>
+                            </div>
+
+                            {/* Description Caption */}
+                            <div className={`px-1 transition-all duration-500 ${isActive ? 'opacity-100 transform translate-y-0' : 'opacity-50 transform -translate-y-2'}`}>
+                                <p className="text-lg text-zinc-300 font-medium">{tutorial.description}</p>
                             </div>
                         </div>
                     );
@@ -177,17 +230,16 @@ export const Tutorials: React.FC = () => {
             </div>
         </div>
 
-        {/* Custom Pagination Indicator */}
-        <div className="mt-12 bg-zinc-900/50 border border-white/5 backdrop-blur-sm px-2 py-1.5 rounded-full flex items-center gap-1.5">
+        {/* Custom Pagination */}
+        <div className="mt-4 bg-[#111] border border-white/10 p-1.5 rounded-full flex items-center gap-2 shadow-2xl relative z-20">
             {tutorials.map((_, i) => (
                 <button
                     key={i}
-                    onClick={() => setActiveIndex(i)}
-                    className={`transition-all duration-300 rounded-full ${
-                        i === activeIndex 
-                        ? 'w-12 h-1.5 bg-white shadow-[0_0_10px_rgba(255,255,255,0.3)]' 
-                        : 'w-1.5 h-1.5 bg-zinc-600 hover:bg-zinc-500'
-                    }`}
+                    onClick={() => scrollToSlide(i)}
+                    className={`
+                        h-1.5 rounded-full transition-all duration-300
+                        ${i === activeIndex ? 'w-8 bg-white' : 'w-1.5 bg-zinc-700 hover:bg-zinc-500'}
+                    `}
                     aria-label={`Go to slide ${i + 1}`}
                 />
             ))}
