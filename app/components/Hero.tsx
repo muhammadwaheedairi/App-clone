@@ -1,8 +1,41 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { Apple, ArrowRight, ChevronsDown } from 'lucide-react';
 import Link from 'next/link';
 
 export const Hero: React.FC = () => {
+  const [stage, setStage] = useState<'listening' | 'transcribing' | 'final'>('listening');
+  const [displayText, setDisplayText] = useState('');
+  const fullText = "Write 3x faster, without lifting a finger.";
+
+  useEffect(() => {
+    // Phase 1: Listening (Audio Wave) - 1.5s duration
+    const listeningTimer = setTimeout(() => {
+      setStage('transcribing');
+    }, 1500);
+
+    return () => clearTimeout(listeningTimer);
+  }, []);
+
+  useEffect(() => {
+    // Phase 2: Transcribing (Typewriter effect)
+    if (stage === 'transcribing') {
+      if (displayText.length < fullText.length) {
+        const timeout = setTimeout(() => {
+          setDisplayText(fullText.slice(0, displayText.length + 1));
+        }, 40); // Typing speed
+        return () => clearTimeout(timeout);
+      } else {
+        // Once typing is complete, switch to final layout (allows for <br> tag)
+        const finishTimer = setTimeout(() => {
+          setStage('final');
+        }, 200);
+        return () => clearTimeout(finishTimer);
+      }
+    }
+  }, [stage, displayText, fullText]);
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden bg-[#050505] px-4 pt-10 pb-20">
       {/* Background Texture/Gradient */}
@@ -58,26 +91,53 @@ export const Hero: React.FC = () => {
         </svg>
       </div>
 
-      {/* Headline */}
-      <h1 className="text-5xl md:text-7xl leading-[1.1] font-bold tracking-tight text-white mb-6 max-w-5xl mx-auto">
-        Write 3x faster, without <br className="hidden md:block" /> lifting a finger.
-      </h1>
+      {/* Animated Headline Section */}
+      <div className="min-h-[160px] flex items-center justify-center mb-6 max-w-5xl mx-auto w-full">
+        {stage === 'listening' ? (
+            <div className="flex items-center gap-2 h-20">
+                {/* Audio Wave Animation */}
+                {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+                    <div 
+                        key={i} 
+                        className="w-3 bg-white rounded-full animate-audio-wave" 
+                        style={{ 
+                            animationDelay: `${i * 0.1}s`,
+                            height: '20%' 
+                        }} 
+                    />
+                ))}
+            </div>
+        ) : (
+            <h1 className="text-5xl md:text-7xl leading-[1.1] font-bold tracking-tight text-white">
+                {stage === 'transcribing' ? (
+                    <span>
+                        {displayText}
+                        <span className="animate-pulse ml-1 w-3 h-10 md:h-14 inline-block bg-white/50 align-middle rounded-sm"></span>
+                    </span>
+                ) : (
+                    <span className="animate-in fade-in duration-500">
+                        Write 3x faster, without <br className="hidden md:block" /> lifting a finger.
+                    </span>
+                )}
+            </h1>
+        )}
+      </div>
 
       {/* Subhead */}
-      <div className="flex flex-col items-center gap-1 mb-12">
+      <div className={`flex flex-col items-center gap-1 mb-12 transition-opacity duration-700 ${stage === 'final' ? 'opacity-100' : 'opacity-0'}`}>
         <span className="text-xl text-zinc-300 font-medium tracking-tight">superwhisper</span>
         <span className="text-sm text-zinc-500 font-medium tracking-wide">AI powered voice to text</span>
       </div>
 
       {/* Chat Bubble Text */}
-      <div className="max-w-2xl mx-auto mb-14 text-center px-4">
+      <div className={`max-w-2xl mx-auto mb-14 text-center px-4 transition-opacity duration-1000 delay-300 ${stage === 'final' ? 'opacity-100' : 'opacity-0'}`}>
         <p className="text-lg md:text-[19px] text-zinc-400 leading-relaxed font-medium">
           Hey Rahul, excited to see what you've been working on, been hearing great things! Let's meet at the usual spot for coffee next week. Cheers, Neil.
         </p>
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-col items-center w-full">
+      <div className={`flex flex-col items-center w-full transition-all duration-1000 delay-500 ${stage === 'final' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <button className="group relative bg-white text-black px-8 py-3.5 rounded-xl font-semibold text-[17px] flex items-center gap-2.5 hover:bg-zinc-200 transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)]">
           <Apple size={20} className="fill-current mb-0.5" />
           <span>Download for Mac</span>
@@ -96,7 +156,7 @@ export const Hero: React.FC = () => {
       </div>
       
       {/* Bottom Arrow */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-zinc-700/50 animate-bounce">
+      <div className={`absolute bottom-10 left-1/2 -translate-x-1/2 text-zinc-700/50 animate-bounce transition-opacity duration-1000 delay-700 ${stage === 'final' ? 'opacity-100' : 'opacity-0'}`}>
         <ChevronsDown size={24} />
       </div>
     </section>

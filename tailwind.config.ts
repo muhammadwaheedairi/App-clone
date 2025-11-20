@@ -24,6 +24,7 @@ const config: Config = {
       animation: {
         'scroll': 'scroll 40s linear infinite',
         'shimmer': 'shimmer 2s infinite',
+        'audio-wave': 'audio-wave 1.2s ease-in-out infinite',
       },
       keyframes: {
         scroll: {
@@ -33,6 +34,10 @@ const config: Config = {
         shimmer: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' },
+        },
+        'audio-wave': {
+            '0%, 100%': { height: '20%', opacity: '0.4' },
+            '50%': { height: '100%', opacity: '1' },
         }
       }
     },
